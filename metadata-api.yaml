@@ -3,6 +3,9 @@ info:
   title: Droplet Metadata API
   description: The calls for the Droplet Metadata API
   version: 0.1.9
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: http://169.254.169.254/metadata/v1
 
@@ -300,30 +303,6 @@ components:
           Type:
             type: string
             example: public
-    Ipv4:
-      type: object
-      properties:
-        ip_address:
-          type: string
-          example: "104.131.20.105"
-        netmask:
-          type: string
-          example: "255.255.192.0"
-        gateway:
-          type: string
-          example: "104.131.0.1"
-    Ipv6:
-      type: object
-      properties:
-        ip_address:
-          type: string
-          example: "104.131.20.105"
-        cidr:
-          type: integer
-          example: 64
-        gateway:
-          type: string
-          example: "104.131.0.1"
 
     Floating_ip:
       type: object
