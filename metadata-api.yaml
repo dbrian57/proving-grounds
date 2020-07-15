@@ -1,0 +1,322 @@
+openapi: 3.0.0
+info:
+  title: Droplet Metadata API
+  description: The calls for the Droplet Metadata API
+  version: 0.1.9
+
+paths:
+  /metadata/v1.json:
+    get:
+      description: Returns the entire contents of Droplet's matadata, in JSON. This endpoint is unique because it returns all of the metadata at once, instead of individual metadata items.
+      responses:
+        '200':
+          description: A JSON array of Droplet metadata.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/metadata'
+  /metadata/v1:
+    get:
+      description: The top-level metadata index. This index can be navigated to find all available Metadata endpoints.
+      responses:
+        '200':
+          description: A list of metadata endpoints.
+          content:
+            text/plain:
+              example: |
+                  id
+                  hostname
+                  user-data
+                  vendor-data
+                  public-keys
+                  region
+                  interfaces/
+                  dns/
+                  floating_ip/
+                  tags/
+                  features/
+  /metadata/v1/id:
+    get:
+      description: The Droplet's unique identifier. This is automatically generated upon Droplet creation.
+      responses:
+        '200':
+          description: The Droplet's ID as an integer.
+          content:
+            text/plain:
+              example: 2756294
+  /metadata/v1/hostname:
+    get:
+      description: The Droplet's hostname, as specified by the user during Droplet creation.
+      responses:
+        '200':
+          description: The Droplet's hostname as plain text.
+          content:
+            text/plain:
+              example: sample-droplet
+  /metadata/v1/user-data:
+    get:
+      description: The user data that was provided by the user during Droplet creation. User data can contain arbitrary data for miscellaneous use or, with certain Linux distributions, an arbitrary shell script or cloud-config file that will be consumed by a variation of cloud-init upon boot. At this time, cloud-config support is included with CoreOS, Ubuntu 14.04, and CentOS 7 images on DigitalOcean.
+      responses:
+        '200':
+          description: The user data provided as plain text.
+          content:
+            text/plain:
+              example: |
+                #! /bin/bash
+                echo "Data from user"
+  /metadata/v1/vendor-data:
+    get:
+      description: Vendor-provided data that can be used to configure Droplets upon their creation. This is similar to user data, but it is provided by DigitalOcean instead of the user.
+      responses:
+        '200':
+          description: The vendor data provided as plain text.
+          content:
+            text/plain:
+              example: |
+                #cloud-config
+                disable_root: false
+                manage_etc_hosts: true
+
+                cloud_config_modules:
+                 - ssh
+                 - set_hostname
+                 - [ update_etc_hosts, once-per-instance ]
+
+                cloud_final_modules:
+                 - scripts-vendor
+                 - scripts-per-once
+                 - scripts-per-boot
+                 - scripts-per-instance
+                 - scripts-user
+  /metadata/v1/public-keys:
+    get:
+      description: Public SSH key(s) that were added to the Droplet's root user's authorized_keys file during Droplet creation.
+      responses:
+        '200':
+          description: The Droplet's public key in plain text.
+          content:
+            text/plain:
+              example: |
+                ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCcbi6cygCUmuNlB0KqzBpHXf7CFYb3VE4pDOf/RLJ8OFDjOM+fjF83a24QktSVIpQnHYpJJT2pQMBxD+ZmnhTbKv+OjwHSHwAfkBullAojgZKzz+oN35P4Ea4J78AvMrHw0zp5MknS+WKEDCA2c6iDRCq6/hZ13Mn64f6c372JK99X29lj/B4VQpKCQyG8PUSTFkb5DXTETGbzuiVft+vM6SF+0XZH9J6dQ7b4yD3sOder+M0Q7I7CJD4VpdVD/JFa2ycOS4A4dZhjKXzabLQXdkWHvYGgNPGA5lI73TcLUAueUYqdq3RrDRfaQ5Z0PEw0mDllCzhk5dQpkmmqNi0F sammy@digitalocean.com
+  /metadata/v1/region:
+    get:
+      description: The region code of where the Droplet resides.
+      responses:
+        '200':
+          description: The Droplet's region as plain text.
+          content:
+            text/plain:
+              example: nyc3
+  /metadata/v1/interfaces:
+    get:
+      description: An index of all network interfaces by type, e.g. "public" and "private".
+      responses:
+        '200':
+          description: The available interfaces as plain text.
+          content:
+            text/plain:
+              example: |
+                public/
+                private/
+  /metadata/v1/interfaces/public:
+    get:
+      description: An enumerated index of all network interfaces that are of the specified interface type.
+      responses:
+        '200':
+          description: An enumerated list of public interfaces as plain text.
+          content:
+            text/plain:
+              example: 0/
+  /metadata/v1/interfaces/public/0:
+    get:
+      description: An index of the attributes of the specified network interface.
+      responses:
+        '200':
+          description: An index of the Droplet's public interfaces as a plain-text list.
+          content:
+            text/plain:
+              example: |
+                mac
+                type
+                ipv4/
+                ipv6/
+  /metadata/v1/interfaces/public/0/mac:
+    get:
+      description: The MAC address of the specified network interface.
+      responses:
+        '200':
+          description: The Droplet's MAC address as plain text.
+          content:
+            text/plain:
+              example: 04:01:2a:0f:2a:03
+  /metadata/v1/interfaces/public/0/type:
+    get:
+      description: The type of the specified network interface.
+      responses:
+        '200':
+          description: The network interface type as plain text.
+          content:
+            text/plain:
+              example: public
+  /metadata/v1/interfaces/public/0/ipv4:
+    get:
+      description: An index of the specified network interface's IPv4 attributes.
+      responses:
+        '200':
+          description: The index of available IPv4 attributes as a plain-text list.
+          content:
+            text/plain:
+              example: |
+                address
+                netmask
+                gateway
+
+components:
+
+  schemas:
+    metadata:
+      type: object
+      properties:
+        droplet_id:
+          type: integer
+          example: 2756294
+        hostname:
+          type: string
+          example: "sample-droplet"
+        vendor_data:
+          type: string
+          example: "#cloud-config\ndisable_root: false\nmanage_etc_hosts: true\n\ncloud_config_modules:\n - ssh\n - set_hostname\n - [ update_etc_hosts, once-per-instance ]\n\ncloud_final_modules:\n - scripts-vendor\n - scripts-per-once\n - scripts-per-boot\n - scripts-per-instance\n - scripts-user\n"
+        public_keys:
+          type: array
+          items:
+              type: string
+          example: ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCcbi6cygCUmuNlB0KqzBpHXf7CFYb3VE4pDOf/RLJ8OFDjOM+fjF83a24QktSVIpQnHYpJJT2pQMBxD+ZmnhTbKv+OjwHSHwAfkBullAojgZKzz+oN35P4Ea4J78AvMrHw0zp5MknS+WKEDCA2c6iDRCq6/hZ13Mn64f6c372JK99X29lj/B4VQpKCQyG8PUSTFkb5DXTETGbzuiVft+vM6SF+0XZH9J6dQ7b4yD3sOder+M0Q7I7CJD4VpdVD/JFa2ycOS4A4dZhjKXzabLQXdkWHvYGgNPGA5lI73TcLUAueUYqdq3RrDRfaQ5Z0PEw0mDllCzhk5dQpkmmqNi0F sammy@digitalocean.com"]
+        region:
+          type: string
+          example: "nyc3"
+        interfaces:
+          $ref: '#/components/schemas/Interfaces'
+        floating_ip:
+          $ref: '#/components/schemas/Floating_ip'
+        dns:
+          $ref: '#/components/schemas/Dns'
+        features:
+          $ref: '#/components/schemas/Features'
+    Interfaces:
+      type: object
+      properties:
+        private:
+          $ref: '#/components/schemas/Private'
+        public:
+          $ref: '#/components/schemas/Public'
+    Private:
+      type: array
+      items:
+        type: object
+        properties:
+          ipv4:
+            type: object
+            properties:
+              ip_address:
+                type: string
+                example: 104.131.20.105
+              netmask:
+                type: string
+                example: 255.255.192.0
+              gateway:
+                type: string
+                example: 104.131.0.1
+          mac:
+            type: string
+            example: 04:01:2a:0f:2a:01
+          Type:
+            type: string
+            example: private
+    Public:
+      type: array
+      items:
+        type: object
+        properties:
+          ipv4:
+            type: object
+            properties:
+              ip_address:
+                type: string
+                example: 104.131.20.105
+              netmask:
+                type: string
+                example: 255.255.192.0
+              gateway:
+                type: string
+                example: 104.131.0.1
+          ipv6:
+            type: object
+            properties:
+              ip_address:
+                type: string
+                example: 2604:A880:0800:0010:0000:0000:017D:2001
+              cidr:
+                type: integer
+                format: int32
+                example: 64
+              gateway:
+                type: string
+                example: 2604:A880:0800:0010:0000:0000:0000:0001
+          mac:
+            type: string
+            example: 04:01:2a:0f:2a:01
+          Type:
+            type: string
+            example: public
+    Ipv4:
+      type: object
+      properties:
+        ip_address:
+          type: string
+          example: "104.131.20.105"
+        netmask:
+          type: string
+          example: "255.255.192.0"
+        gateway:
+          type: string
+          example: "104.131.0.1"
+    Ipv6:
+      type: object
+      properties:
+        ip_address:
+          type: string
+          example: "104.131.20.105"
+        cidr:
+          type: integer
+          example: 64
+        gateway:
+          type: string
+          example: "104.131.0.1"
+
+    Floating_ip:
+      type: object
+      properties:
+        ipv4:
+          type: object
+          properties:
+            active:
+              type: boolean
+              example: false
+    Dns:
+      type: object
+      properties:
+        nameservers:
+          type: array
+          items:
+            type: string
+            example: ["2001:4860:4860::8844","2001:4860:4860::8888","8.8.8.8"]
+
+
+    Features:
+      type: object
+      properties:
+        dhcp_enabled:
+          type: boolean
+          example: true
