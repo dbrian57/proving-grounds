@@ -3,10 +3,14 @@ info:
   title: Droplet Metadata API
   description: The calls for the Droplet Metadata API
   version: 0.1.9
+servers:
+  - url: http://169.254.169.254/metadata/v1
 
 paths:
   /metadata/v1.json:
     get:
+      summary: Returns Droplet's metadata as JSON.
+      operationId: getMetadata
       description: Returns the entire contents of Droplet's matadata, in JSON. This endpoint is unique because it returns all of the metadata at once, instead of individual metadata items.
       responses:
         '200':
@@ -19,6 +23,8 @@ paths:
                   $ref: '#/components/schemas/metadata'
   /metadata/v1:
     get:
+      summary: Metadata index.
+      operationId: getMetadataIndex
       description: The top-level metadata index. This index can be navigated to find all available Metadata endpoints.
       responses:
         '200':
@@ -39,6 +45,8 @@ paths:
                   features/
   /metadata/v1/id:
     get:
+      summary: Droplet ID.
+      operationId: getDropletId
       description: The Droplet's unique identifier. This is automatically generated upon Droplet creation.
       responses:
         '200':
@@ -48,6 +56,8 @@ paths:
               example: 2756294
   /metadata/v1/hostname:
     get:
+      summary: Droplet's hostname.
+      operationId: getHostname
       description: The Droplet's hostname, as specified by the user during Droplet creation.
       responses:
         '200':
@@ -57,6 +67,8 @@ paths:
               example: sample-droplet
   /metadata/v1/user-data:
     get:
+      summary: Returns Droplet's user data.
+      operationId: getUserData
       description: The user data that was provided by the user during Droplet creation. User data can contain arbitrary data for miscellaneous use or, with certain Linux distributions, an arbitrary shell script or cloud-config file that will be consumed by a variation of cloud-init upon boot. At this time, cloud-config support is included with CoreOS, Ubuntu 14.04, and CentOS 7 images on DigitalOcean.
       responses:
         '200':
@@ -68,6 +80,8 @@ paths:
                 echo "Data from user"
   /metadata/v1/vendor-data:
     get:
+      summary: Returns Droplet's vendor data.
+      operationId: getVendorData
       description: Vendor-provided data that can be used to configure Droplets upon their creation. This is similar to user data, but it is provided by DigitalOcean instead of the user.
       responses:
         '200':
@@ -92,6 +106,8 @@ paths:
                  - scripts-user
   /metadata/v1/public-keys:
     get:
+      summary: Returns Droplet's public keys.
+      operationId: getPublicKeys
       description: Public SSH key(s) that were added to the Droplet's root user's authorized_keys file during Droplet creation.
       responses:
         '200':
@@ -102,6 +118,8 @@ paths:
                 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCcbi6cygCUmuNlB0KqzBpHXf7CFYb3VE4pDOf/RLJ8OFDjOM+fjF83a24QktSVIpQnHYpJJT2pQMBxD+ZmnhTbKv+OjwHSHwAfkBullAojgZKzz+oN35P4Ea4J78AvMrHw0zp5MknS+WKEDCA2c6iDRCq6/hZ13Mn64f6c372JK99X29lj/B4VQpKCQyG8PUSTFkb5DXTETGbzuiVft+vM6SF+0XZH9J6dQ7b4yD3sOder+M0Q7I7CJD4VpdVD/JFa2ycOS4A4dZhjKXzabLQXdkWHvYGgNPGA5lI73TcLUAueUYqdq3RrDRfaQ5Z0PEw0mDllCzhk5dQpkmmqNi0F sammy@digitalocean.com
   /metadata/v1/region:
     get:
+      summary: Returns Droplet's region.
+      operationId: getRegion
       description: The region code of where the Droplet resides.
       responses:
         '200':
@@ -111,6 +129,8 @@ paths:
               example: nyc3
   /metadata/v1/interfaces:
     get:
+      summary: Returns index of network interfaces.
+      operationId: getInterfaces
       description: An index of all network interfaces by type, e.g. "public" and "private".
       responses:
         '200':
@@ -122,7 +142,9 @@ paths:
                 private/
   /metadata/v1/interfaces/public:
     get:
-      description: An enumerated index of all network interfaces that are of the specified interface type.
+      summary: Returns enumerated index of public interfaces.
+      operationId: getInterfacesPublic
+      description: An enumerated index of all public network interfaces that are of the specified interface type.
       responses:
         '200':
           description: An enumerated list of public interfaces as plain text.
@@ -131,6 +153,8 @@ paths:
               example: 0/
   /metadata/v1/interfaces/public/0:
     get:
+      summary: Returns index of public interface attributes.
+      operationId: getInterfacePublicIndex
       description: An index of the attributes of the specified network interface.
       responses:
         '200':
@@ -144,6 +168,8 @@ paths:
                 ipv6/
   /metadata/v1/interfaces/public/0/mac:
     get:
+      summary: Returns public interface's MAC address.
+      operationId: getInterfacePublicMac
       description: The MAC address of the specified network interface.
       responses:
         '200':
@@ -153,6 +179,8 @@ paths:
               example: 04:01:2a:0f:2a:03
   /metadata/v1/interfaces/public/0/type:
     get:
+      summary: Returns network interface's type/
+      operationId: getInterfacePublicType
       description: The type of the specified network interface.
       responses:
         '200':
@@ -162,6 +190,8 @@ paths:
               example: public
   /metadata/v1/interfaces/public/0/ipv4:
     get:
+      summary: Returns IPv4 attributes of public interface.
+      operationId: getInterfacePublicIpv4
       description: An index of the specified network interface's IPv4 attributes.
       responses:
         '200':
